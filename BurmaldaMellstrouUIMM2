@@ -1,0 +1,411 @@
+--[[
+    BurmaldaMellstroyUIMM2
+    Advanced Murder Mystery ESP & Tools
+]]
+
+-- Services
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+
+local LP = Players.LocalPlayer
+local roles = {}
+
+-- GUI Creation
+local ScreenGui = Instance.new("ScreenGui")
+local MainFrame = Instance.new("Frame")
+local TopBar = Instance.new("Frame")
+local Title = Instance.new("TextLabel")
+local MinimizeBtn = Instance.new("TextButton")
+local CloseBtn = Instance.new("TextButton")
+local ContentFrame = Instance.new("Frame")
+local PlayerList = Instance.new("ScrollingFrame")
+local UIListLayout = Instance.new("UIListLayout")
+local OptionsFrame = Instance.new("Frame")
+
+-- Properties
+ScreenGui.Name = "BurmaldaMellstroyUIMM2"
+ScreenGui.Parent = LP.PlayerGui
+ScreenGui.ResetOnSpawn = false
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+-- Main Frame
+MainFrame.Name = "MainFrame"
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+MainFrame.BorderSizePixel = 0
+MainFrame.Position = UDim2.new(0.5, -200, 0.5, -200)
+MainFrame.Size = UDim2.new(0, 400, 0, 400)
+MainFrame.Active = true
+MainFrame.Draggable = true
+
+-- Rounded corners
+local MainCorner = Instance.new("UICorner")
+MainCorner.CornerRadius = UDim.new(0, 10)
+MainCorner.Parent = MainFrame
+
+-- Top Bar
+TopBar.Name = "TopBar"
+TopBar.Parent = MainFrame
+TopBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+TopBar.BorderSizePixel = 0
+TopBar.Size = UDim2.new(1, 0, 0, 35)
+
+local TopCorner = Instance.new("UICorner")
+TopCorner.CornerRadius = UDim.new(0, 10)
+TopCorner.Parent = TopBar
+
+-- Title
+Title.Name = "Title"
+Title.Parent = TopBar
+Title.BackgroundTransparency = 1
+Title.Position = UDim2.new(0, 10, 0, 0)
+Title.Size = UDim2.new(0.7, 0, 1, 0)
+Title.Font = Enum.Font.GothamBold
+Title.Text = "BurmaldaMellstroyUIMM2"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextSize = 14
+Title.TextXAlignment = Enum.TextXAlignment.Left
+
+-- Minimize Button
+MinimizeBtn.Name = "MinimizeBtn"
+MinimizeBtn.Parent = TopBar
+MinimizeBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+MinimizeBtn.BorderSizePixel = 0
+MinimizeBtn.Position = UDim2.new(1, -70, 0.5, -12)
+MinimizeBtn.Size = UDim2.new(0, 25, 0, 25)
+MinimizeBtn.Font = Enum.Font.GothamBold
+MinimizeBtn.Text = "_"
+MinimizeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+MinimizeBtn.TextSize = 16
+
+local MinCorner = Instance.new("UICorner")
+MinCorner.CornerRadius = UDim.new(0, 5)
+MinCorner.Parent = MinimizeBtn
+
+-- Close Button
+CloseBtn.Name = "CloseBtn"
+CloseBtn.Parent = TopBar
+CloseBtn.BackgroundColor3 = Color3.fromRGB(200, 40, 40)
+CloseBtn.BorderSizePixel = 0
+CloseBtn.Position = UDim2.new(1, -35, 0.5, -12)
+CloseBtn.Size = UDim2.new(0, 25, 0, 25)
+CloseBtn.Font = Enum.Font.GothamBold
+CloseBtn.Text = "X"
+CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseBtn.TextSize = 14
+
+local CloseCorner = Instance.new("UICorner")
+CloseCorner.CornerRadius = UDim.new(0, 5)
+CloseCorner.Parent = CloseBtn
+
+-- Content Frame
+ContentFrame.Name = "ContentFrame"
+ContentFrame.Parent = MainFrame
+ContentFrame.BackgroundTransparency = 1
+ContentFrame.Position = UDim2.new(0, 0, 0, 35)
+ContentFrame.Size = UDim2.new(1, 0, 1, -35)
+
+-- Options Frame
+OptionsFrame.Name = "OptionsFrame"
+OptionsFrame.Parent = ContentFrame
+OptionsFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+OptionsFrame.BorderSizePixel = 0
+OptionsFrame.Position = UDim2.new(0, 10, 0, 10)
+OptionsFrame.Size = UDim2.new(1, -20, 0, 120)
+
+local OptCorner = Instance.new("UICorner")
+OptCorner.CornerRadius = UDim.new(0, 8)
+OptCorner.Parent = OptionsFrame
+
+-- Player List
+PlayerList.Name = "PlayerList"
+PlayerList.Parent = ContentFrame
+PlayerList.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+PlayerList.BorderSizePixel = 0
+PlayerList.Position = UDim2.new(0, 10, 0, 140)
+PlayerList.Size = UDim2.new(1, -20, 1, -150)
+PlayerList.ScrollBarThickness = 4
+PlayerList.CanvasSize = UDim2.new(0, 0, 0, 0)
+
+local ListCorner = Instance.new("UICorner")
+ListCorner.CornerRadius = UDim.new(0, 8)
+ListCorner.Parent = PlayerList
+
+UIListLayout.Parent = PlayerList
+UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+UIListLayout.Padding = UDim.new(0, 5)
+
+-- Functions
+local function CreateButton(name, position, callback)
+    local btn = Instance.new("TextButton")
+    btn.Name = name
+    btn.Parent = OptionsFrame
+    btn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+    btn.BorderSizePixel = 0
+    btn.Position = position
+    btn.Size = UDim2.new(0.45, 0, 0, 30)
+    btn.Font = Enum.Font.Gotham
+    btn.Text = name
+    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.TextSize = 13
+    
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 6)
+    corner.Parent = btn
+    
+    btn.MouseButton1Click:Connect(callback)
+    
+    btn.MouseEnter:Connect(function()
+        TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(45, 45, 45)}):Play()
+    end)
+    
+    btn.MouseLeave:Connect(function()
+        TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(35, 35, 35)}):Play()
+    end)
+    
+    return btn
+end
+
+local ESPEnabled = true
+local ShowNames = true
+local FlingPower = 500
+
+-- Toggle ESP
+CreateButton("Toggle ESP", UDim2.new(0.025, 0, 0, 10), function()
+    ESPEnabled = not ESPEnabled
+end)
+
+-- Toggle Names
+CreateButton("Toggle Names", UDim2.new(0.525, 0, 0, 10), function()
+    ShowNames = not ShowNames
+end)
+
+-- Kill All (Fling)
+CreateButton("Fling Murderer", UDim2.new(0.025, 0, 0, 45), function()
+    local murder = roles and roles.Murder
+    if murder then
+        local player = Players:FindFirstChild(murder)
+        if player then
+            FlingPlayer(player)
+        end
+    end
+end)
+
+-- Teleport to Sheriff
+CreateButton("TP to Sheriff", UDim2.new(0.525, 0, 0, 45), function()
+    local sheriff = roles and roles.Sheriff
+    if sheriff then
+        local player = Players:FindFirstChild(sheriff)
+        if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            LP.Character.HumanoidRootPart.CFrame = player.Character.HumanoidRootPart.CFrame
+        end
+    end
+end)
+
+-- Speed Boost
+CreateButton("Speed Boost", UDim2.new(0.025, 0, 0, 80), function()
+    if LP.Character and LP.Character:FindFirstChild("Humanoid") then
+        LP.Character.Humanoid.WalkSpeed = LP.Character.Humanoid.WalkSpeed == 16 and 50 or 16
+    end
+end)
+
+-- Jump Power
+CreateButton("Jump Boost", UDim2.new(0.525, 0, 0, 80), function()
+    if LP.Character and LP.Character:FindFirstChild("Humanoid") then
+        LP.Character.Humanoid.JumpPower = LP.Character.Humanoid.JumpPower == 50 and 120 or 50
+    end
+end)
+
+-- Fling Function
+function FlingPlayer(player)
+    if not player or not player.Character then return end
+    
+    local char = LP.Character
+    if not char or not char:FindFirstChild("HumanoidRootPart") then return end
+    
+    local targetChar = player.Character
+    if not targetChar or not targetChar:FindFirstChild("HumanoidRootPart") then return end
+    
+    local BV = Instance.new("BodyVelocity")
+    BV.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+    BV.Velocity = (targetChar.HumanoidRootPart.Position - char.HumanoidRootPart.Position).unit * FlingPower
+    BV.Parent = char.HumanoidRootPart
+    
+    wait(0.1)
+    BV:Destroy()
+end
+
+-- Create Player Button
+function CreatePlayerButton(player)
+    local btn = Instance.new("TextButton")
+    btn.Name = player.Name
+    btn.Parent = PlayerList
+    btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    btn.BorderSizePixel = 0
+    btn.Size = UDim2.new(1, -10, 0, 35)
+    btn.Font = Enum.Font.Gotham
+    btn.Text = player.Name
+    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.TextSize = 12
+    btn.TextXAlignment = Enum.TextXAlignment.Left
+    btn.TextXOffset = 10
+    
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 6)
+    corner.Parent = btn
+    
+    local flingBtn = Instance.new("TextButton")
+    flingBtn.Name = "Fling"
+    flingBtn.Parent = btn
+    flingBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+    flingBtn.BorderSizePixel = 0
+    flingBtn.Position = UDim2.new(1, -70, 0.5, -12)
+    flingBtn.Size = UDim2.new(0, 60, 0, 24)
+    flingBtn.Font = Enum.Font.GothamBold
+    flingBtn.Text = "FLING"
+    flingBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    flingBtn.TextSize = 10
+    
+    local flingCorner = Instance.new("UICorner")
+    flingCorner.CornerRadius = UDim.new(0, 5)
+    flingCorner.Parent = flingBtn
+    
+    flingBtn.MouseButton1Click:Connect(function()
+        FlingPlayer(player)
+    end)
+    
+    return btn
+end
+
+-- Check if player is alive
+function IsAlive(player)
+    if not roles then return false end
+    for name, data in pairs(roles) do
+        if player.Name == name then
+            return not data.Killed and not data.Dead
+        end
+    end
+    return false
+end
+
+-- Create/Update Highlights
+function UpdateESP()
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= LP and player.Character then
+            local highlight = player.Character:FindFirstChild("Highlight")
+            
+            if ESPEnabled and not highlight then
+                highlight = Instance.new("Highlight")
+                highlight.Parent = player.Character
+                highlight.FillTransparency = 0.5
+                highlight.OutlineTransparency = 0
+            elseif not ESPEnabled and highlight then
+                highlight:Destroy()
+                continue
+            end
+            
+            if highlight and IsAlive(player) then
+                if roles.Murder == player.Name then
+                    highlight.FillColor = Color3.fromRGB(225, 0, 0)
+                    highlight.OutlineColor = Color3.fromRGB(255, 0, 0)
+                elseif roles.Sheriff == player.Name then
+                    highlight.FillColor = Color3.fromRGB(0, 0, 225)
+                    highlight.OutlineColor = Color3.fromRGB(0, 100, 255)
+                elseif roles.Hero == player.Name and not IsAlive(Players:FindFirstChild(roles.Sheriff)) then
+                    highlight.FillColor = Color3.fromRGB(255, 250, 0)
+                    highlight.OutlineColor = Color3.fromRGB(255, 200, 0)
+                else
+                    highlight.FillColor = Color3.fromRGB(0, 225, 0)
+                    highlight.OutlineColor = Color3.fromRGB(0, 255, 0)
+                end
+            elseif highlight then
+                highlight.FillColor = Color3.fromRGB(100, 100, 100)
+                highlight.OutlineColor = Color3.fromRGB(150, 150, 150)
+            end
+        end
+    end
+end
+
+-- Update Player List
+function UpdatePlayerList()
+    for _, child in pairs(PlayerList:GetChildren()) do
+        if child:IsA("TextButton") then
+            child:Destroy()
+        end
+    end
+    
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= LP then
+            local btn = CreatePlayerButton(player)
+            
+            -- Color based on role
+            if roles.Murder == player.Name then
+                btn.BackgroundColor3 = Color3.fromRGB(60, 20, 20)
+            elseif roles.Sheriff == player.Name then
+                btn.BackgroundColor3 = Color3.fromRGB(20, 20, 60)
+            elseif roles.Hero == player.Name then
+                btn.BackgroundColor3 = Color3.fromRGB(60, 60, 20)
+            end
+        end
+    end
+    
+    PlayerList.CanvasSize = UDim2.new(0, 0, 0, UIListLayout.AbsoluteContentSize.Y + 10)
+end
+
+-- Button Events
+local minimized = false
+MinimizeBtn.MouseButton1Click:Connect(function()
+    minimized = not minimized
+    ContentFrame.Visible = not minimized
+    MainFrame:TweenSize(
+        minimized and UDim2.new(0, 400, 0, 35) or UDim2.new(0, 400, 0, 400),
+        Enum.EasingDirection.Out,
+        Enum.EasingStyle.Quad,
+        0.3,
+        true
+    )
+end)
+
+CloseBtn.MouseButton1Click:Connect(function()
+    ScreenGui:Destroy()
+end)
+
+-- Main Loop
+RunService.RenderStepped:Connect(function()
+    local success, result = pcall(function()
+        local getData = ReplicatedStorage:FindFirstChild("GetPlayerData", true)
+        if getData then
+            return getData:InvokeServer()
+        end
+    end)
+    
+    if success and result then
+        local tempRoles = {}
+        for name, data in pairs(result) do
+            if data.Role == "Murderer" then
+                tempRoles.Murder = name
+            elseif data.Role == "Sheriff" then
+                tempRoles.Sheriff = name
+            elseif data.Role == "Hero" then
+                tempRoles.Hero = name
+            end
+        end
+        
+        if tempRoles.Murder ~= roles.Murder or tempRoles.Sheriff ~= roles.Sheriff then
+            roles = tempRoles
+            UpdatePlayerList()
+        end
+        
+        roles = result
+    end
+    
+    UpdateESP()
+end)
+
+-- Initial setup
+UpdatePlayerList()
+
+print("BurmaldaMellstroyUIMM2 loaded successfully!")
