@@ -1,6 +1,6 @@
 --[[
     BurmaldaMellstroyUIMM2
-    Advanced Murder Mystery ESP & Tools
+    Advanced Murder Mystery ESP & Tools - ULTIMATE BYPASS EDITION
 ]]
 
 -- Services
@@ -10,11 +10,16 @@ local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local Lighting = game:GetService("Lighting")
+local VirtualUser = game:GetService("VirtualUser")
+local CoreGui = game:GetService("CoreGui")
+local HttpService = game:GetService("HttpService")
+local TeleportService = game:GetService("TeleportService")
 
 local LP = Players.LocalPlayer
 local roles = {}
+local Camera = workspace.CurrentCamera
 
--- Music System with Multiple Songs
+-- Music System with 6 Songs
 local SONGS = {
     {
         name = "Terranova",
@@ -30,6 +35,21 @@ local SONGS = {
         name = "Bass",
         url = "https://github.com/Fl7ing/RobloxUI-Repositoryf/raw/refs/heads/main/YTDown_YouTube_Media_ELQPYWxR7Qw_009_128k%20(1).mp3",
         file = "Bass_Song.mp3"
+    },
+    {
+        name = "Taco Bell",
+        url = "https://github.com/Fl7ing/RobloxUI-Repositoryf/raw/refs/heads/main/YTDown_YouTube_TACO-BELL-Super-Slowed_Media_DM_eFGed1Z8_009_128k.mp3",
+        file = "TacoBell_Slowed.mp3"
+    },
+    {
+        name = "DJ Play",
+        url = "https://github.com/Fl7ing/RobloxUI-Repositoryf/raw/refs/heads/main/YTDown_YouTube_dj-play-this-song-SUPER-slowed_Media_2BQZFcOmTs_009_128k%20(1).mp3",
+        file = "DJPlay_Slowed.mp3"
+    },
+    {
+        name = "TikTok",
+        url = "https://github.com/Fl7ing/RobloxUI-Repositoryf/raw/refs/heads/main/ssstik.io_1779873476340.mp3",
+        file = "TikTok_Sound.mp3"
     }
 }
 
@@ -67,7 +87,7 @@ function DownloadAndPlaySong(songData)
         currentSound.SoundId = audioData
         currentSound.Volume = 2.5
         currentSound.Looped = true
-        currentSound.Parent = game:GetService("CoreGui")
+        currentSound.Parent = CoreGui
 
         if not currentSound.IsLoaded then 
             currentSound.Loaded:Wait() 
@@ -78,7 +98,6 @@ function DownloadAndPlaySong(songData)
     end
 end
 
--- Start with first song
 DownloadAndPlaySong(SONGS[currentSongIndex])
 
 -- GUI Creation
@@ -90,11 +109,8 @@ local RightImage = Instance.new("ImageLabel")
 local Title = Instance.new("TextLabel")
 local MinimizeBtn = Instance.new("TextButton")
 local CloseBtn = Instance.new("TextButton")
-local ContentFrame = Instance.new("Frame")
-local PlayerList = Instance.new("ScrollingFrame")
+local ContentFrame = Instance.new("ScrollingFrame")
 local UIListLayout = Instance.new("UIListLayout")
-local OptionsFrame = Instance.new("Frame")
-local ExtraFrame = Instance.new("Frame")
 
 -- Properties
 ScreenGui.Name = "BurmaldaMellstroyUIMM2"
@@ -105,74 +121,79 @@ ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 -- Main Frame
 MainFrame.Name = "MainFrame"
 MainFrame.Parent = ScreenGui
-MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 MainFrame.BorderSizePixel = 0
-MainFrame.Position = UDim2.new(0.5, -220, 0.5, -250)
-MainFrame.Size = UDim2.new(0, 440, 0, 500)
+MainFrame.Position = UDim2.new(0.5, -250, 0.5, -350)
+MainFrame.Size = UDim2.new(0, 500, 0, 700)
 MainFrame.Active = true
 MainFrame.Draggable = true
 
 local MainCorner = Instance.new("UICorner")
-MainCorner.CornerRadius = UDim.new(0, 10)
+MainCorner.CornerRadius = UDim.new(0, 12)
 MainCorner.Parent = MainFrame
+
+local MainStroke = Instance.new("UIStroke")
+MainStroke.Color = Color3.fromRGB(255, 50, 50)
+MainStroke.Thickness = 2
+MainStroke.Parent = MainFrame
 
 -- Top Bar
 TopBar.Name = "TopBar"
 TopBar.Parent = MainFrame
-TopBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+TopBar.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 TopBar.BorderSizePixel = 0
-TopBar.Size = UDim2.new(1, 0, 0, 35)
+TopBar.Size = UDim2.new(1, 0, 0, 40)
 
 local TopCorner = Instance.new("UICorner")
-TopCorner.CornerRadius = UDim.new(0, 10)
+TopCorner.CornerRadius = UDim.new(0, 12)
 TopCorner.Parent = TopBar
 
 -- Left Image (Spinning)
 LeftImage.Name = "LeftImage"
 LeftImage.Parent = TopBar
 LeftImage.BackgroundTransparency = 1
-LeftImage.Size = UDim2.new(0, 24, 0, 24)
+LeftImage.Size = UDim2.new(0, 30, 0, 30)
 LeftImage.Image = "rbxassetid://132853558280556"
 LeftImage.ScaleType = Enum.ScaleType.Fit
 LeftImage.AnchorPoint = Vector2.new(0.5, 0.5)
-LeftImage.Position = UDim2.new(0, 17, 0.5, 0)
+LeftImage.Position = UDim2.new(0, 20, 0.5, 0)
 
 local LeftCorner = Instance.new("UICorner")
 LeftCorner.CornerRadius = UDim.new(1, 0)
 LeftCorner.Parent = LeftImage
 
--- Title (RED TEXT)
+-- Title
 Title.Name = "Title"
 Title.Parent = TopBar
 Title.BackgroundTransparency = 1
-Title.Position = UDim2.new(0, 35, 0, 0)
-Title.Size = UDim2.new(1, -140, 1, 0)
+Title.Position = UDim2.new(0, 40, 0, 0)
+Title.Size = UDim2.new(1, -150, 1, 0)
 Title.Font = Enum.Font.GothamBold
 Title.Text = "BurmaldaMellstroyUIMM2"
-Title.TextColor3 = Color3.fromRGB(255, 50, 50) -- RED TEXT
-Title.TextSize = 14
+Title.TextColor3 = Color3.fromRGB(255, 50, 50)
+Title.TextSize = 16
 Title.TextXAlignment = Enum.TextXAlignment.Center
 
 -- Right Image (Spinning)
 RightImage.Name = "RightImage"
 RightImage.Parent = TopBar
 RightImage.BackgroundTransparency = 1
-RightImage.Size = UDim2.new(0, 24, 0, 24)
+RightImage.Size = UDim2.new(0, 30, 0, 30)
 RightImage.Image = "rbxassetid://132853558280556"
 RightImage.ScaleType = Enum.ScaleType.Fit
 RightImage.AnchorPoint = Vector2.new(0.5, 0.5)
-RightImage.Position = UDim2.new(1, -93, 0.5, 0)
+RightImage.Position = UDim2.new(1, -100, 0.5, 0)
 
 local RightCorner = Instance.new("UICorner")
 RightCorner.CornerRadius = UDim.new(1, 0)
 RightCorner.Parent = RightImage
 
--- Spinning Animation (VERY FAST)
+-- Spinning Animation (ULTRA FAST)
 spawn(function()
     while true do
         RunService.RenderStepped:Wait()
-        LeftImage.Rotation = LeftImage.Rotation + 6 -- Very fast
-        RightImage.Rotation = RightImage.Rotation - 6
+        LeftImage.Rotation = LeftImage.Rotation + 8
+        RightImage.Rotation = RightImage.Rotation - 8
     end
 end)
 
@@ -181,428 +202,1063 @@ MinimizeBtn.Name = "MinimizeBtn"
 MinimizeBtn.Parent = TopBar
 MinimizeBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 MinimizeBtn.BorderSizePixel = 0
-MinimizeBtn.Position = UDim2.new(1, -70, 0.5, -12)
-MinimizeBtn.Size = UDim2.new(0, 25, 0, 25)
+MinimizeBtn.Position = UDim2.new(1, -70, 0.5, -15)
+MinimizeBtn.Size = UDim2.new(0, 30, 0, 30)
 MinimizeBtn.Font = Enum.Font.GothamBold
 MinimizeBtn.Text = "_"
 MinimizeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-MinimizeBtn.TextSize = 16
+MinimizeBtn.TextSize = 18
 
 local MinCorner = Instance.new("UICorner")
-MinCorner.CornerRadius = UDim.new(0, 5)
+MinCorner.CornerRadius = UDim.new(0, 6)
 MinCorner.Parent = MinimizeBtn
 
 -- Close Button
 CloseBtn.Name = "CloseBtn"
 CloseBtn.Parent = TopBar
-CloseBtn.BackgroundColor3 = Color3.fromRGB(200, 40, 40)
+CloseBtn.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
 CloseBtn.BorderSizePixel = 0
-CloseBtn.Position = UDim2.new(1, -35, 0.5, -12)
-CloseBtn.Size = UDim2.new(0, 25, 0, 25)
+CloseBtn.Position = UDim2.new(1, -35, 0.5, -15)
+CloseBtn.Size = UDim2.new(0, 30, 0, 30)
 CloseBtn.Font = Enum.Font.GothamBold
 CloseBtn.Text = "X"
 CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-CloseBtn.TextSize = 14
+CloseBtn.TextSize = 16
 
 local CloseCorner = Instance.new("UICorner")
-CloseCorner.CornerRadius = UDim.new(0, 5)
+CloseCorner.CornerRadius = UDim.new(0, 6)
 CloseCorner.Parent = CloseBtn
 
--- Content Frame
+-- Content Frame (Scrollable)
 ContentFrame.Name = "ContentFrame"
 ContentFrame.Parent = MainFrame
 ContentFrame.BackgroundTransparency = 1
-ContentFrame.Position = UDim2.new(0, 0, 0, 35)
-ContentFrame.Size = UDim2.new(1, 0, 1, -35)
+ContentFrame.Position = UDim2.new(0, 0, 0, 45)
+ContentFrame.Size = UDim2.new(1, 0, 1, -45)
+ContentFrame.ScrollBarThickness = 6
+ContentFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+ContentFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
 
--- Options Frame
-OptionsFrame.Name = "OptionsFrame"
-OptionsFrame.Parent = ContentFrame
-OptionsFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-OptionsFrame.BorderSizePixel = 0
-OptionsFrame.Position = UDim2.new(0, 10, 0, 10)
-OptionsFrame.Size = UDim2.new(1, -20, 0, 120)
-
-local OptCorner = Instance.new("UICorner")
-OptCorner.CornerRadius = UDim.new(0, 8)
-OptCorner.Parent = OptionsFrame
-
--- Extra Functions Frame
-ExtraFrame.Name = "ExtraFrame"
-ExtraFrame.Parent = ContentFrame
-ExtraFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-ExtraFrame.BorderSizePixel = 0
-ExtraFrame.Position = UDim2.new(0, 10, 0, 140)
-ExtraFrame.Size = UDim2.new(1, -20, 0, 120)
-
-local ExtraCorner = Instance.new("UICorner")
-ExtraCorner.CornerRadius = UDim.new(0, 8)
-ExtraCorner.Parent = ExtraFrame
-
--- Player List
-PlayerList.Name = "PlayerList"
-PlayerList.Parent = ContentFrame
-PlayerList.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-PlayerList.BorderSizePixel = 0
-PlayerList.Position = UDim2.new(0, 10, 0, 270)
-PlayerList.Size = UDim2.new(1, -20, 1, -280)
-PlayerList.ScrollBarThickness = 4
-PlayerList.CanvasSize = UDim2.new(0, 0, 0, 0)
-
-local ListCorner = Instance.new("UICorner")
-ListCorner.CornerRadius = UDim.new(0, 8)
-ListCorner.Parent = PlayerList
-
-UIListLayout.Parent = PlayerList
+UIListLayout.Parent = ContentFrame
 UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-UIListLayout.Padding = UDim.new(0, 5)
+UIListLayout.Padding = UDim.new(0, 10)
+UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 
--- Button Creation Function with RED text
-local function CreateButton(name, position, parent, callback)
+-- Create Category Function
+local function CreateCategory(name)
+    local frame = Instance.new("Frame")
+    frame.Name = name
+    frame.Parent = ContentFrame
+    frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+    frame.BorderSizePixel = 0
+    frame.Size = UDim2.new(0.95, 0, 0, 150)
+    
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 10)
+    corner.Parent = frame
+    
+    local stroke = Instance.new("UIStroke")
+    stroke.Color = Color3.fromRGB(255, 50, 50)
+    stroke.Thickness = 1
+    stroke.Parent = frame
+    
+    local title = Instance.new("TextLabel")
+    title.Name = "Title"
+    title.Parent = frame
+    title.BackgroundTransparency = 1
+    title.Position = UDim2.new(0, 10, 0, 5)
+    title.Size = UDim2.new(1, -20, 0, 25)
+    title.Font = Enum.Font.GothamBold
+    title.Text = "━━━ " .. name .. " ━━━"
+    title.TextColor3 = Color3.fromRGB(255, 50, 50)
+    title.TextSize = 14
+    title.TextXAlignment = Enum.TextXAlignment.Center
+    
+    return frame
+end
+
+-- Create Button in Category
+local function CreateCategoryButton(name, position, parent, callback)
     local btn = Instance.new("TextButton")
     btn.Name = name
-    btn.Parent = parent or OptionsFrame
+    btn.Parent = parent
     btn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
     btn.BorderSizePixel = 0
     btn.Position = position
-    btn.Size = UDim2.new(0.45, 0, 0, 30)
+    btn.Size = UDim2.new(0.3, -5, 0, 35)
     btn.Font = Enum.Font.GothamBold
     btn.Text = name
-    btn.TextColor3 = Color3.fromRGB(255, 50, 50) -- RED TEXT
-    btn.TextSize = 12
+    btn.TextColor3 = Color3.fromRGB(255, 50, 50)
+    btn.TextSize = 11
+    btn.AutoButtonColor = false
     
     local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(0, 6)
+    corner.CornerRadius = UDim.new(0, 8)
     corner.Parent = btn
+    
+    local stroke = Instance.new("UIStroke")
+    stroke.Color = Color3.fromRGB(255, 50, 50)
+    stroke.Thickness = 1
+    stroke.Transparency = 0.5
+    stroke.Parent = btn
     
     btn.MouseButton1Click:Connect(callback)
     
     btn.MouseEnter:Connect(function()
         TweenService:Create(btn, TweenInfo.new(0.2), {
-            BackgroundColor3 = Color3.fromRGB(255, 50, 50),
+            BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+        }):Play()
+        TweenService:Create(btn, TweenInfo.new(0.2), {
             TextColor3 = Color3.fromRGB(255, 255, 255)
         }):Play()
+        stroke.Transparency = 0
     end)
     
     btn.MouseLeave:Connect(function()
         TweenService:Create(btn, TweenInfo.new(0.2), {
-            BackgroundColor3 = Color3.fromRGB(35, 35, 35),
+            BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+        }):Play()
+        TweenService:Create(btn, TweenInfo.new(0.2), {
             TextColor3 = Color3.fromRGB(255, 50, 50)
         }):Play()
+        stroke.Transparency = 0.5
     end)
     
     return btn
 end
 
-local ESPEnabled = true
-local FlingPower = 500
+-- Variables
+local ESPEnabled = false
+local ESPBoxes = {}
+local ESPTracers = {}
+local ESPNames = {}
+local ESPDistances = {}
+local ESPHealthBars = {}
 local Fullbright = false
 local NoClip = false
 local InfiniteJump = false
 local Fly = false
-local FlySpeed = 50
+local FlySpeed = 100
+local AutoFarm = false
+local AntiAFK = false
+local SpinBot = false
+local WalkSpeed = 16
+local JumpPower = 50
+local Invisibility = false
+local AutoCollectCoins = false
+local AutoPickupGun = false
+local KillAura = false
+local AutoDodge = false
+local Aimbot = false
+local SilentAim = false
+local WallHack = false
+local BunnyHop = false
+local SpeedBypass = false
 
--- Main Functions (Top Frame)
-CreateButton("Toggle ESP", UDim2.new(0.025, 0, 0, 10), OptionsFrame, function()
+-- BYPASS SYSTEM FOR MOVEMENT
+local function SetupBypass()
+    if LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") then
+        LP.Character.HumanoidRootPart.Anchored = false
+        
+        local humanoid = LP.Character:FindFirstChild("Humanoid")
+        if humanoid then
+            local mt = getrawmetatable(game)
+            local oldIndex = mt.__index
+            local oldNewIndex = mt.__newindex
+            
+            setreadonly(mt, false)
+            
+            mt.__newindex = newcclosure(function(t, k, v)
+                if t:IsA("Humanoid") and (k == "WalkSpeed" or k == "JumpPower") then
+                    return
+                end
+                return oldNewIndex(t, k, v)
+            end)
+            
+            setreadonly(mt, true)
+        end
+    end
+end
+
+-- BYPASS NOCLIP
+local function BypassNoClip()
+    if NoClip and LP.Character then
+        for _, part in pairs(LP.Character:GetDescendants()) do
+            if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
+                part.CanCollide = false
+            end
+        end
+        
+        if LP.Character:FindFirstChild("HumanoidRootPart") then
+            LP.Character.HumanoidRootPart.CanCollide = false
+        end
+    end
+end
+
+-- BYPASS SPEED
+local function BypassSpeed(speed)
+    if LP.Character and LP.Character:FindFirstChild("Humanoid") and SpeedBypass then
+        local humanoid = LP.Character.Humanoid
+        
+        if speed > 16 then
+            local moveDirection = humanoid.MoveDirection
+            if moveDirection.Magnitude > 0 then
+                local hrp = LP.Character.HumanoidRootPart
+                local newCFrame = hrp.CFrame + (moveDirection * (speed / 16 - 1) * 0.5)
+                
+                local ray = Ray.new(newCFrame.Position, Vector3.new(0, -5, 0))
+                local hit = workspace:FindPartOnRay(ray, LP.Character)
+                
+                if hit then
+                    hrp.CFrame = newCFrame
+                end
+            end
+        end
+        
+        humanoid.WalkSpeed = 16
+    end
+end
+
+-- BYPASS FLY SYSTEM
+local flyEnabled = false
+local flyConnection
+
+function EnableBypassFly()
+    flyEnabled = true
+    
+    if LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") then
+        local hrp = LP.Character.HumanoidRootPart
+        
+        local platform = Instance.new("Part")
+        platform.Size = Vector3.new(10, 0.5, 10)
+        platform.Transparency = 1
+        platform.Anchored = true
+        platform.CanCollide = true
+        platform.Name = "FlyPlatform"
+        platform.Parent = workspace
+        
+        flyConnection = RunService.Heartbeat:Connect(function()
+            if not flyEnabled or not LP.Character or not LP.Character:FindFirstChild("HumanoidRootPart") then
+                if platform then platform:Destroy() end
+                return
+            end
+            
+            local camera = workspace.CurrentCamera
+            local moveDirection = Vector3.new(0, 0, 0)
+            
+            if UserInputService:IsKeyDown(Enum.KeyCode.W) then
+                moveDirection = moveDirection + camera.CFrame.LookVector
+            end
+            if UserInputService:IsKeyDown(Enum.KeyCode.S) then
+                moveDirection = moveDirection - camera.CFrame.LookVector
+            end
+            if UserInputService:IsKeyDown(Enum.KeyCode.A) then
+                moveDirection = moveDirection - camera.CFrame.RightVector
+            end
+            if UserInputService:IsKeyDown(Enum.KeyCode.D) then
+                moveDirection = moveDirection + camera.CFrame.RightVector
+            end
+            if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
+                moveDirection = moveDirection + Vector3.new(0, 1, 0)
+            end
+            if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
+                moveDirection = moveDirection - Vector3.new(0, 1, 0)
+            end
+            
+            if moveDirection.Magnitude > 0 then
+                moveDirection = moveDirection.Unit
+                hrp.CFrame = hrp.CFrame + (moveDirection * (FlySpeed / 50))
+            end
+            
+            platform.CFrame = hrp.CFrame * CFrame.new(0, -3.5, 0)
+            hrp.Velocity = Vector3.new(0, 0, 0)
+        end)
+    end
+end
+
+function DisableBypassFly()
+    flyEnabled = false
+    if flyConnection then
+        flyConnection:Disconnect()
+    end
+    
+    local platform = workspace:FindFirstChild("FlyPlatform")
+    if platform then
+        platform:Destroy()
+    end
+end
+
+-- BYPASS FLING SYSTEM
+function BypassFling(targetPlayer)
+    if not targetPlayer or not targetPlayer.Character then return end
+    
+    local char = LP.Character
+    local targetChar = targetPlayer.Character
+    
+    if not char or not targetChar then return end
+    if not char:FindFirstChild("HumanoidRootPart") or not targetChar:FindFirstChild("HumanoidRootPart") then return end
+    
+    local hrp = char.HumanoidRootPart
+    local targetHRP = targetChar.HumanoidRootPart
+    local originalCFrame = hrp.CFrame
+    
+    local flingPart = Instance.new("Part")
+    flingPart.Size = Vector3.new(8, 8, 8)
+    flingPart.Transparency = 1
+    flingPart.CanCollide = true
+    flingPart.Anchored = false
+    flingPart.Name = "FlingBypass"
+    flingPart.Parent = workspace
+    
+    for _, v in pairs(char:GetDescendants()) do
+        if v:IsA("BasePart") then
+            v.CanCollide = false
+            v.Massless = true
+        end
+    end
+    
+    local attachment0 = Instance.new("Attachment", hrp)
+    local attachment1 = Instance.new("Attachment", flingPart)
+    
+    local alignPos = Instance.new("AlignPosition")
+    alignPos.Attachment0 = attachment0
+    alignPos.Attachment1 = attachment1
+    alignPos.RigidityEnabled = true
+    alignPos.ReactionForceEnabled = false
+    alignPos.ApplyAtCenterOfMass = true
+    alignPos.MaxForce = 9e9
+    alignPos.MaxVelocity = 9e9
+    alignPos.Responsiveness = 200
+    alignPos.Parent = hrp
+    
+    local alignOri = Instance.new("AlignOrientation")
+    alignOri.Attachment0 = attachment0
+    alignOri.Attachment1 = attachment1
+    alignOri.RigidityEnabled = true
+    alignOri.ReactionTorqueEnabled = false
+    alignOri.MaxTorque = 9e9
+    alignOri.MaxAngularVelocity = 9e9
+    alignOri.Responsiveness = 200
+    alignOri.Parent = hrp
+    
+    task.spawn(function()
+        for i = 1, 25 do
+            task.wait()
+            
+            if not targetChar.Parent or not targetChar:FindFirstChild("HumanoidRootPart") then
+                break
+            end
+            
+            local direction = (targetHRP.Position - flingPart.Position).Unit
+            flingPart.CFrame = targetHRP.CFrame * CFrame.new(0, 0, 3)
+            flingPart.Velocity = direction * 300
+            flingPart.RotVelocity = Vector3.new(100, 100, 100)
+        end
+        
+        task.wait(0.5)
+        alignPos:Destroy()
+        alignOri:Destroy()
+        attachment0:Destroy()
+        attachment1:Destroy()
+        flingPart:Destroy()
+        
+        hrp.CFrame = originalCFrame
+        hrp.Velocity = Vector3.new(0, 0, 0)
+        
+        for _, v in pairs(char:GetDescendants()) do
+            if v:IsA("BasePart") then
+                v.CanCollide = true
+                v.Massless = false
+            end
+        end
+    end)
+end
+
+-- BYPASS INFINITE JUMP
+local infJumpConnection
+function EnableBypassInfJump()
+    infJumpConnection = UserInputService.JumpRequest:Connect(function()
+        if InfiniteJump and LP.Character and LP.Character:FindFirstChild("Humanoid") then
+            local humanoid = LP.Character.Humanoid
+            if humanoid:GetState() ~= Enum.HumanoidStateType.Jumping then
+                humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+            end
+        end
+    end)
+end
+
+-- INVISIBILITY FUNCTION
+function EnableInvisibility()
+    if LP.Character then
+        for _, part in pairs(LP.Character:GetDescendants()) do
+            if part:IsA("BasePart") or part:IsA("Decal") then
+                part.Transparency = 1
+            end
+        end
+        if LP.Character:FindFirstChild("Head") then
+            LP.Character.Head.face.Transparency = 1
+        end
+    end
+end
+
+function DisableInvisibility()
+    if LP.Character then
+        for _, part in pairs(LP.Character:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.Transparency = 0
+            end
+        end
+        if LP.Character:FindFirstChild("Head") then
+            LP.Character.Head.face.Transparency = 0
+        end
+    end
+end
+
+-- AUTO COLLECT COINS
+spawn(function()
+    while wait(0.5) do
+        if AutoCollectCoins and LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") then
+            for _, obj in pairs(workspace:GetDescendants()) do
+                if obj.Name == "Coin" or obj.Name == "CoinContainer" then
+                    pcall(function()
+                        firetouchinterest(LP.Character.HumanoidRootPart, obj, 0)
+                        firetouchinterest(LP.Character.HumanoidRootPart, obj, 1)
+                    end)
+                end
+            end
+        end
+    end
+end)
+
+-- AUTO PICKUP GUN
+spawn(function()
+    while wait(0.5) do
+        if AutoPickupGun and LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") then
+            for _, obj in pairs(workspace:GetDescendants()) do
+                if obj.Name == "GunDrop" then
+                    pcall(function()
+                        LP.Character.HumanoidRootPart.CFrame = obj.CFrame
+                    end)
+                end
+            end
+        end
+    end
+end)
+
+-- KILL AURA
+spawn(function()
+    while wait(0.1) do
+        if KillAura then
+            for _, player in pairs(Players:GetPlayers()) do
+                if player ~= LP and player.Character then
+                    local dist = (player.Character.HumanoidRootPart.Position - LP.Character.HumanoidRootPart.Position).Magnitude
+                    if dist < 20 then
+                        BypassFling(player)
+                    end
+                end
+            end
+        end
+    end
+end)
+
+-- BUNNY HOP
+spawn(function()
+    while wait() do
+        if BunnyHop and LP.Character and LP.Character:FindFirstChild("Humanoid") then
+            if LP.Character.Humanoid.MoveDirection.Magnitude > 0 then
+                LP.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+            end
+        end
+    end
+end)
+
+-- ESP CATEGORY
+local ESPFrame = CreateCategory("ESP & VISUALS")
+
+CreateCategoryButton("Toggle ESP", UDim2.new(0.02, 0, 0, 35), ESPFrame, function()
     ESPEnabled = not ESPEnabled
-end)
-
-CreateButton("Fling Murderer", UDim2.new(0.525, 0, 0, 10), OptionsFrame, function()
-    local murder = roles and roles.Murder
-    if murder then
-        local player = Players:FindFirstChild(murder)
-        if player then
-            FlingPlayer(player)
-        end
+    if not ESPEnabled then
+        for _, v in pairs(ESPBoxes) do pcall(function() v:Remove() end) end
+        for _, v in pairs(ESPTracers) do pcall(function() v:Remove() end) end
+        for _, v in pairs(ESPNames) do pcall(function() v:Remove() end) end
+        for _, v in pairs(ESPDistances) do pcall(function() v:Remove() end) end
+        ESPBoxes = {}
+        ESPTracers = {}
+        ESPNames = {}
+        ESPDistances = {}
     end
 end)
 
-CreateButton("TP to Sheriff", UDim2.new(0.025, 0, 0, 45), OptionsFrame, function()
-    local sheriff = roles and roles.Sheriff
-    if sheriff then
-        local player = Players:FindFirstChild(sheriff)
-        if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-            LP.Character.HumanoidRootPart.CFrame = player.Character.HumanoidRootPart.CFrame
-        end
-    end
-end)
-
-CreateButton("TP to Murderer", UDim2.new(0.525, 0, 0, 45), OptionsFrame, function()
-    local murder = roles and roles.Murder
-    if murder then
-        local player = Players:FindFirstChild(murder)
-        if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-            LP.Character.HumanoidRootPart.CFrame = player.Character.HumanoidRootPart.CFrame
-        end
-    end
-end)
-
-CreateButton("Speed Boost", UDim2.new(0.025, 0, 0, 80), OptionsFrame, function()
-    if LP.Character and LP.Character:FindFirstChild("Humanoid") then
-        LP.Character.Humanoid.WalkSpeed = LP.Character.Humanoid.WalkSpeed == 16 and 100 or 16
-    end
-end)
-
-CreateButton("Jump Boost", UDim2.new(0.525, 0, 0, 80), OptionsFrame, function()
-    if LP.Character and LP.Character:FindFirstChild("Humanoid") then
-        LP.Character.Humanoid.JumpPower = LP.Character.Humanoid.JumpPower == 50 and 150 or 50
-    end
-end)
-
--- Extra Functions (Bottom Frame)
-CreateButton("Fullbright", UDim2.new(0.025, 0, 0, 10), ExtraFrame, function()
+CreateCategoryButton("Fullbright", UDim2.new(0.35, 0, 0, 35), ESPFrame, function()
     Fullbright = not Fullbright
     if Fullbright then
-        Lighting.Brightness = 2
+        Lighting.Brightness = 3
         Lighting.ClockTime = 14
         Lighting.FogEnd = 100000
         Lighting.GlobalShadows = false
-        Lighting.OutdoorAmbient = Color3.fromRGB(128, 128, 128)
+        Lighting.OutdoorAmbient = Color3.fromRGB(150, 150, 150)
     else
         Lighting.Brightness = 1
         Lighting.ClockTime = 12
         Lighting.FogEnd = 100000
         Lighting.GlobalShadows = true
+        Lighting.OutdoorAmbient = Color3.fromRGB(70, 70, 70)
     end
 end)
 
-CreateButton("NoClip", UDim2.new(0.525, 0, 0, 10), ExtraFrame, function()
+CreateCategoryButton("Chams", UDim2.new(0.68, 0, 0, 35), ESPFrame, function()
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= LP and player.Character then
+            for _, part in pairs(player.Character:GetDescendants()) do
+                if part:IsA("BasePart") then
+                    part.Material = Enum.Material.ForceField
+                end
+            end
+        end
+    end
+end)
+
+CreateCategoryButton("X-Ray Walls", UDim2.new(0.02, 0, 0, 75), ESPFrame, function()
+    WallHack = not WallHack
+    for _, obj in pairs(workspace:GetDescendants()) do
+        if obj:IsA("BasePart") and obj.Transparency < 1 and not obj.Parent:FindFirstChild("Humanoid") then
+            obj.Transparency = WallHack and 0.7 or 0
+        end
+    end
+end)
+
+CreateCategoryButton("Remove Fog", UDim2.new(0.35, 0, 0, 75), ESPFrame, function()
+    Lighting.FogEnd = 100000
+    for _, v in pairs(Lighting:GetChildren()) do
+        if v:IsA("Atmosphere") then
+            v:Destroy()
+        end
+    end
+end)
+
+CreateCategoryButton("Spin Bot", UDim2.new(0.68, 0, 0, 75), ESPFrame, function()
+    SpinBot = not SpinBot
+end)
+
+CreateCategoryButton("Highlight All", UDim2.new(0.02, 0, 0, 115), ESPFrame, function()
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= LP and player.Character and not player.Character:FindFirstChild("Highlight") then
+            local h = Instance.new("Highlight")
+            h.Parent = player.Character
+            h.FillTransparency = 0.5
+            h.OutlineTransparency = 0
+            h.FillColor = Color3.fromRGB(255, 0, 0)
+        end
+    end
+end)
+
+CreateCategoryButton("Remove Textures", UDim2.new(0.35, 0, 0, 115), ESPFrame, function()
+    for _, obj in pairs(workspace:GetDescendants()) do
+        if obj:IsA("Decal") or obj:IsA("Texture") then
+            obj:Destroy()
+        end
+    end
+end)
+
+CreateCategoryButton("Rainbow ESP", UDim2.new(0.68, 0, 0, 115), ESPFrame, function()
+    spawn(function()
+        while wait(0.1) do
+            for _, player in pairs(Players:GetPlayers()) do
+                if player ~= LP and player.Character and player.Character:FindFirstChild("Highlight") then
+                    local h = player.Character.Highlight
+                    h.FillColor = Color3.fromHSV(tick() % 5 / 5, 1, 1)
+                end
+            end
+        end
+    end)
+end)
+
+-- MOVEMENT CATEGORY (BYPASS)
+local MovementFrame = CreateCategory("MOVEMENT (BYPASS)")
+
+CreateCategoryButton("Speed x2", UDim2.new(0.02, 0, 0, 35), MovementFrame, function()
+    WalkSpeed = WalkSpeed == 16 and 32 or 16
+    SpeedBypass = WalkSpeed > 16
+    SetupBypass()
+end)
+
+CreateCategoryButton("Speed x5", UDim2.new(0.35, 0, 0, 35), MovementFrame, function()
+    WalkSpeed = WalkSpeed == 16 and 80 or 16
+    SpeedBypass = WalkSpeed > 16
+    SetupBypass()
+end)
+
+CreateCategoryButton("Speed x10", UDim2.new(0.68, 0, 0, 35), MovementFrame, function()
+    WalkSpeed = WalkSpeed == 16 and 160 or 16
+    SpeedBypass = WalkSpeed > 16
+    SetupBypass()
+end)
+
+CreateCategoryButton("Fly", UDim2.new(0.02, 0, 0, 75), MovementFrame, function()
+    Fly = not Fly
+    if Fly then
+        EnableBypassFly()
+    else
+        DisableBypassFly()
+    end
+end)
+
+CreateCategoryButton("NoClip", UDim2.new(0.35, 0, 0, 75), MovementFrame, function()
     NoClip = not NoClip
 end)
 
-CreateButton("Infinite Jump", UDim2.new(0.025, 0, 0, 45), ExtraFrame, function()
+CreateCategoryButton("Inf Jump", UDim2.new(0.68, 0, 0, 75), MovementFrame, function()
     InfiniteJump = not InfiniteJump
-end)
-
-CreateButton("Fly", UDim2.new(0.525, 0, 0, 45), ExtraFrame, function()
-    Fly = not Fly
-    if Fly then
-        EnableFly()
-    else
-        DisableFly()
+    if not infJumpConnection then
+        EnableBypassInfJump()
     end
 end)
 
-CreateButton("Next Song", UDim2.new(0.025, 0, 0, 80), ExtraFrame, function()
-    currentSongIndex = currentSongIndex + 1
-    if currentSongIndex > #SONGS then
-        currentSongIndex = 1
+CreateCategoryButton("Jump x2", UDim2.new(0.02, 0, 0, 115), MovementFrame, function()
+    JumpPower = JumpPower == 50 and 100 or 50
+    if LP.Character and LP.Character:FindFirstChild("Humanoid") then
+        LP.Character.Humanoid.JumpPower = JumpPower
     end
-    DownloadAndPlaySong(SONGS[currentSongIndex])
 end)
 
-CreateButton("Kill All", UDim2.new(0.525, 0, 0, 80), ExtraFrame, function()
+CreateCategoryButton("Jump x5", UDim2.new(0.35, 0, 0, 115), MovementFrame, function()
+    JumpPower = JumpPower == 50 and 250 or 50
+    if LP.Character and LP.Character:FindFirstChild("Humanoid") then
+        LP.Character.Humanoid.JumpPower = JumpPower
+    end
+end)
+
+CreateCategoryButton("Bunny Hop", UDim2.new(0.68, 0, 0, 115), MovementFrame, function()
+    BunnyHop = not BunnyHop
+end)
+
+-- COMBAT CATEGORY (BYPASS)
+local CombatFrame = CreateCategory("COMBAT (BYPASS)")
+
+CreateCategoryButton("Kill Murderer", UDim2.new(0.02, 0, 0, 35), CombatFrame, function()
+    if roles.Murder then
+        local player = Players:FindFirstChild(roles.Murder)
+        if player then BypassFling(player) end
+    end
+end)
+
+CreateCategoryButton("Kill Sheriff", UDim2.new(0.35, 0, 0, 35), CombatFrame, function()
+    if roles.Sheriff then
+        local player = Players:FindFirstChild(roles.Sheriff)
+        if player then BypassFling(player) end
+    end
+end)
+
+CreateCategoryButton("Kill All", UDim2.new(0.68, 0, 0, 35), CombatFrame, function()
     for _, player in pairs(Players:GetPlayers()) do
         if player ~= LP then
-            FlingPlayer(player)
+            task.spawn(function()
+                BypassFling(player)
+            end)
             wait(0.1)
         end
     end
 end)
 
--- Infinite Jump
-UserInputService.JumpRequest:Connect(function()
-    if InfiniteJump and LP.Character and LP.Character:FindFirstChild("Humanoid") then
-        LP.Character.Humanoid:ChangeState("Jumping")
+CreateCategoryButton("Kill Aura", UDim2.new(0.02, 0, 0, 75), CombatFrame, function()
+    KillAura = not KillAura
+end)
+
+CreateCategoryButton("God Mode", UDim2.new(0.35, 0, 0, 75), CombatFrame, function()
+    if LP.Character and LP.Character:FindFirstChild("Humanoid") then
+        LP.Character.Humanoid.Health = 999999
+        LP.Character.Humanoid.MaxHealth = 999999
     end
 end)
 
--- NoClip
-RunService.Stepped:Connect(function()
-    if NoClip and LP.Character then
-        for _, part in pairs(LP.Character:GetDescendants()) do
-            if part:IsA("BasePart") then
-                part.CanCollide = false
-            end
+CreateCategoryButton("Respawn", UDim2.new(0.68, 0, 0, 75), CombatFrame, function()
+    LP.Character:BreakJoints()
+end)
+
+CreateCategoryButton("Bring Murderer", UDim2.new(0.02, 0, 0, 115), CombatFrame, function()
+    if roles.Murder then
+        local player = Players:FindFirstChild(roles.Murder)
+        if player and player.Character and LP.Character then
+            player.Character.HumanoidRootPart.CFrame = LP.Character.HumanoidRootPart.CFrame
         end
     end
 end)
 
--- Fly System
-local flyBV, flyBG
-
-function EnableFly()
-    if not LP.Character or not LP.Character:FindFirstChild("HumanoidRootPart") then return end
-    
-    flyBV = Instance.new("BodyVelocity")
-    flyBV.MaxForce = Vector3.new(9e9, 9e9, 9e9)
-    flyBV.Velocity = Vector3.new(0, 0, 0)
-    flyBV.Parent = LP.Character.HumanoidRootPart
-    
-    flyBG = Instance.new("BodyGyro")
-    flyBG.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
-    flyBG.P = 1000
-    flyBG.Parent = LP.Character.HumanoidRootPart
-end
-
-function DisableFly()
-    if flyBV then flyBV:Destroy() end
-    if flyBG then flyBG:Destroy() end
-end
-
-RunService.RenderStepped:Connect(function()
-    if Fly and LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") and flyBV then
-        local camera = workspace.CurrentCamera
-        local moveDirection = Vector3.new(0, 0, 0)
-        
-        if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-            moveDirection = moveDirection + (camera.CFrame.LookVector * FlySpeed)
-        end
-        if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-            moveDirection = moveDirection - (camera.CFrame.LookVector * FlySpeed)
-        end
-        if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-            moveDirection = moveDirection - (camera.CFrame.RightVector * FlySpeed)
-        end
-        if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-            moveDirection = moveDirection + (camera.CFrame.RightVector * FlySpeed)
-        end
-        if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-            moveDirection = moveDirection + Vector3.new(0, FlySpeed, 0)
-        end
-        if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-            moveDirection = moveDirection - Vector3.new(0, FlySpeed, 0)
-        end
-        
-        flyBV.Velocity = moveDirection
-        flyBG.CFrame = camera.CFrame
-    end
-end)
-
--- Fling Function
-function FlingPlayer(player)
-    if not player or not player.Character then return end
-    
-    local char = LP.Character
-    if not char or not char:FindFirstChild("HumanoidRootPart") then return end
-    
-    local targetChar = player.Character
-    if not targetChar or not targetChar:FindFirstChild("HumanoidRootPart") then return end
-    
-    local BV = Instance.new("BodyVelocity")
-    BV.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-    BV.Velocity = (targetChar.HumanoidRootPart.Position - char.HumanoidRootPart.Position).unit * FlingPower
-    BV.Parent = char.HumanoidRootPart
-    
-    wait(0.1)
-    BV:Destroy()
-end
-
--- Create Player Button
-function CreatePlayerButton(player)
-    local btn = Instance.new("TextButton")
-    btn.Name = player.Name
-    btn.Parent = PlayerList
-    btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    btn.BorderSizePixel = 0
-    btn.Size = UDim2.new(1, -10, 0, 35)
-    btn.Font = Enum.Font.Gotham
-    btn.Text = player.Name
-    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    btn.TextSize = 12
-    btn.TextXAlignment = Enum.TextXAlignment.Left
-    btn.TextXOffset = 10
-    
-    local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(0, 6)
-    corner.Parent = btn
-    
-    local flingBtn = Instance.new("TextButton")
-    flingBtn.Name = "Fling"
-    flingBtn.Parent = btn
-    flingBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
-    flingBtn.BorderSizePixel = 0
-    flingBtn.Position = UDim2.new(1, -70, 0.5, -12)
-    flingBtn.Size = UDim2.new(0, 60, 0, 24)
-    flingBtn.Font = Enum.Font.GothamBold
-    flingBtn.Text = "FLING"
-    flingBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    flingBtn.TextSize = 10
-    
-    local flingCorner = Instance.new("UICorner")
-    flingCorner.CornerRadius = UDim.new(0, 5)
-    flingCorner.Parent = flingBtn
-    
-    flingBtn.MouseButton1Click:Connect(function()
-        FlingPlayer(player)
-    end)
-    
-    return btn
-end
-
--- Check if player is alive
-function IsAlive(player)
-    if not roles then return false end
-    for name, data in pairs(roles) do
-        if player.Name == name then
-            return not data.Killed and not data.Dead
-        end
-    end
-    return false
-end
-
--- Create/Update Highlights
-function UpdateESP()
+CreateCategoryButton("Bring All", UDim2.new(0.35, 0, 0, 115), CombatFrame, function()
     for _, player in pairs(Players:GetPlayers()) do
-        if player ~= LP and player.Character then
-            local highlight = player.Character:FindFirstChild("Highlight")
-            
-            if ESPEnabled and not highlight then
-                highlight = Instance.new("Highlight")
-                highlight.Parent = player.Character
-                highlight.FillTransparency = 0.5
-                highlight.OutlineTransparency = 0
-            elseif not ESPEnabled and highlight then
-                highlight:Destroy()
-                continue
-            end
-            
-            if highlight and IsAlive(player) then
-                if roles.Murder == player.Name then
-                    highlight.FillColor = Color3.fromRGB(225, 0, 0)
-                    highlight.OutlineColor = Color3.fromRGB(255, 0, 0)
-                elseif roles.Sheriff == player.Name then
-                    highlight.FillColor = Color3.fromRGB(0, 0, 225)
-                    highlight.OutlineColor = Color3.fromRGB(0, 100, 255)
-                elseif roles.Hero == player.Name and roles.Sheriff and not IsAlive(Players:FindFirstChild(roles.Sheriff)) then
-                    highlight.FillColor = Color3.fromRGB(255, 250, 0)
-                    highlight.OutlineColor = Color3.fromRGB(255, 200, 0)
-                else
-                    highlight.FillColor = Color3.fromRGB(0, 225, 0)
-                    highlight.OutlineColor = Color3.fromRGB(0, 255, 0)
+        if player ~= LP and player.Character and LP.Character then
+            player.Character.HumanoidRootPart.CFrame = LP.Character.HumanoidRootPart.CFrame
+        end
+    end
+end)
+
+CreateCategoryButton("Auto Dodge", UDim2.new(0.68, 0, 0, 115), CombatFrame, function()
+    AutoDodge = not AutoDodge
+    spawn(function()
+        while AutoDodge do
+            wait(0.05)
+            if LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") then
+                for _, player in pairs(Players:GetPlayers()) do
+                    if player ~= LP and player.Character then
+                        local dist = (player.Character.HumanoidRootPart.Position - LP.Character.HumanoidRootPart.Position).Magnitude
+                        if dist < 10 then
+                            LP.Character.HumanoidRootPart.CFrame = LP.Character.HumanoidRootPart.CFrame * CFrame.new(5, 0, 0)
+                        end
+                    end
                 end
-            elseif highlight then
-                highlight.FillColor = Color3.fromRGB(100, 100, 100)
-                highlight.OutlineColor = Color3.fromRGB(150, 150, 150)
+            end
+        end
+    end)
+end)
+
+-- TELEPORT CATEGORY
+local TeleportFrame = CreateCategory("TELEPORT")
+
+CreateCategoryButton("TP Murderer", UDim2.new(0.02, 0, 0, 35), TeleportFrame, function()
+    if roles.Murder then
+        local player = Players:FindFirstChild(roles.Murder)
+        if player and player.Character and LP.Character then
+            LP.Character.HumanoidRootPart.CFrame = player.Character.HumanoidRootPart.CFrame
+        end
+    end
+end)
+
+CreateCategoryButton("TP Sheriff", UDim2.new(0.35, 0, 0, 35), TeleportFrame, function()
+    if roles.Sheriff then
+        local player = Players:FindFirstChild(roles.Sheriff)
+        if player and player.Character and LP.Character then
+            LP.Character.HumanoidRootPart.CFrame = player.Character.HumanoidRootPart.CFrame
+        end
+    end
+end)
+
+CreateCategoryButton("TP Hero", UDim2.new(0.68, 0, 0, 35), TeleportFrame, function()
+    if roles.Hero then
+        local player = Players:FindFirstChild(roles.Hero)
+        if player and player.Character and LP.Character then
+            LP.Character.HumanoidRootPart.CFrame = player.Character.HumanoidRootPart.CFrame
+        end
+    end
+end)
+
+CreateCategoryButton("TP Random", UDim2.new(0.02, 0, 0, 75), TeleportFrame, function()
+    local plrs = Players:GetPlayers()
+    local randomPlayer = plrs[math.random(1, #plrs)]
+    if randomPlayer ~= LP and randomPlayer.Character and LP.Character then
+        LP.Character.HumanoidRootPart.CFrame = randomPlayer.Character.HumanoidRootPart.CFrame
+    end
+end)
+
+CreateCategoryButton("TP Lobby", UDim2.new(0.35, 0, 0, 75), TeleportFrame, function()
+    if LP.Character then
+        LP.Character.HumanoidRootPart.CFrame = CFrame.new(0, 100, 0)
+    end
+end)
+
+CreateCategoryButton("TP Gun", UDim2.new(0.68, 0, 0, 75), TeleportFrame, function()
+    for _, obj in pairs(workspace:GetDescendants()) do
+        if obj.Name == "GunDrop" then
+            if LP.Character then
+                LP.Character.HumanoidRootPart.CFrame = obj.CFrame
             end
         end
     end
+end)
+
+CreateCategoryButton("Follow Murderer", UDim2.new(0.02, 0, 0, 115), TeleportFrame, function()
+    spawn(function()
+        while wait(0.5) do
+            if roles.Murder then
+                local player = Players:FindFirstChild(roles.Murder)
+                if player and player.Character and LP.Character then
+                    LP.Character.HumanoidRootPart.CFrame = player.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3)
+                end
+            end
+        end
+    end)
+end)
+
+CreateCategoryButton("Follow Sheriff", UDim2.new(0.35, 0, 0, 115), TeleportFrame, function()
+    spawn(function()
+        while wait(0.5) do
+            if roles.Sheriff then
+                local player = Players:FindFirstChild(roles.Sheriff)
+                if player and player.Character and LP.Character then
+                    LP.Character.HumanoidRootPart.CFrame = player.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3)
+                end
+            end
+        end
+    end)
+end)
+
+CreateCategoryButton("Orbit Murderer", UDim2.new(0.68, 0, 0, 115), TeleportFrame, function()
+    spawn(function()
+        local angle = 0
+        while wait(0.05) do
+            if roles.Murder then
+                local player = Players:FindFirstChild(roles.Murder)
+                if player and player.Character and LP.Character then
+                    angle = angle + 0.1
+                    local offset = CFrame.new(math.cos(angle) * 10, 0, math.sin(angle) * 10)
+                    LP.Character.HumanoidRootPart.CFrame = player.Character.HumanoidRootPart.CFrame * offset
+                end
+            end
+        end
+    end)
+end)
+
+-- EXPLOIT CATEGORY (DEEP ICEBERG)
+local ExploitFrame = CreateCategory("🔥 EXPLOIT (DEEP)")
+
+CreateCategoryButton("Invisibility", UDim2.new(0.02, 0, 0, 35), ExploitFrame, function()
+    Invisibility = not Invisibility
+    if Invisibility then
+        EnableInvisibility()
+    else
+        DisableInvisibility()
+    end
+end)
+
+CreateCategoryButton("Auto Coins", UDim2.new(0.35, 0, 0, 35), ExploitFrame, function()
+    AutoCollectCoins = not AutoCollectCoins
+end)
+
+CreateCategoryButton("Auto Gun", UDim2.new(0.68, 0, 0, 35), ExploitFrame, function()
+    AutoPickupGun = not AutoPickupGun
+end)
+
+CreateCategoryButton("Crash Server", UDim2.new(0.02, 0, 0, 75), ExploitFrame, function()
+    for i = 1, 1000 do
+        for _, player in pairs(Players:GetPlayers()) do
+            if player ~= LP then
+                BypassFling(player)
+            end
+        end
+    end
+end)
+
+CreateCategoryButton("Lag Server", UDim2.new(0.35, 0, 0, 75), ExploitFrame, function()
+    for i = 1, 100 do
+        local part = Instance.new("Part", workspace)
+        part.Size = Vector3.new(50, 50, 50)
+        part.Anchored = true
+        part.Position = Vector3.new(math.random(-1000, 1000), 100, math.random(-1000, 1000))
+    end
+end)
+
+CreateCategoryButton("Spam Particles", UDim2.new(0.68, 0, 0, 75), ExploitFrame, function()
+    if LP.Character then
+        for i = 1, 50 do
+            local particle = Instance.new("ParticleEmitter", LP.Character.HumanoidRootPart)
+            particle.Texture = "rbxasset://textures/particles/smoke_main.dds"
+            particle.Rate = 1000
+            particle.Lifetime = NumberRange.new(5)
+            particle.Speed = NumberRange.new(50)
+        end
+    end
+end)
+
+CreateCategoryButton("Anti Kick", UDim2.new(0.02, 0, 0, 115), ExploitFrame, function()
+    local mt = getrawmetatable(game)
+    local oldNamecall = mt.__namecall
+    
+    setreadonly(mt, false)
+    mt.__namecall = newcclosure(function(self, ...)
+        local method = getnamecallmethod()
+        if method == "Kick" then
+            return
+        end
+        return oldNamecall(self, ...)
+    end)
+    setreadonly(mt, true)
+end)
+
+CreateCategoryButton("Delete Map", UDim2.new(0.35, 0, 0, 115), ExploitFrame, function()
+    for _, obj in pairs(workspace:GetChildren()) do
+        if not obj:IsA("Camera") and not obj:FindFirstChild("Humanoid") then
+            obj:Destroy()
+        end
+    end
+end)
+
+CreateCategoryButton("Nuke Server", UDim2.new(0.68, 0, 0, 115), ExploitFrame, function()
+    local explosion = Instance.new("Explosion", workspace)
+    explosion.Position = LP.Character.HumanoidRootPart.Position
+    explosion.BlastRadius = 500
+    explosion.BlastPressure = 1000000
+end)
+
+-- MISC CATEGORY
+local MiscFrame = CreateCategory("MISC & MUSIC")
+
+CreateCategoryButton("Anti AFK", UDim2.new(0.02, 0, 0, 35), MiscFrame, function()
+    AntiAFK = not AntiAFK
+    if AntiAFK then
+        LP.Idled:Connect(function()
+            VirtualUser:CaptureController()
+            VirtualUser:ClickButton2(Vector2.new())
+        end)
+    end
+end)
+
+CreateCategoryButton("Next Song", UDim2.new(0.35, 0, 0, 35), MiscFrame, function()
+    currentSongIndex = currentSongIndex + 1
+    if currentSongIndex > #SONGS then currentSongIndex = 1 end
+    DownloadAndPlaySong(SONGS[currentSongIndex])
+end)
+
+CreateCategoryButton("Prev Song", UDim2.new(0.68, 0, 0, 35), MiscFrame, function()
+    currentSongIndex = currentSongIndex - 1
+    if currentSongIndex < 1 then currentSongIndex = #SONGS end
+    DownloadAndPlaySong(SONGS[currentSongIndex])
+end)
+
+CreateCategoryButton("Free Cam", UDim2.new(0.02, 0, 0, 75), MiscFrame, function()
+    Camera.CameraSubject = nil
+end)
+
+CreateCategoryButton("Reset Cam", UDim2.new(0.35, 0, 0, 75), MiscFrame, function()
+    Camera.CameraSubject = LP.Character.Humanoid
+end)
+
+CreateCategoryButton("FPS Boost", UDim2.new(0.68, 0, 0, 75), MiscFrame, function()
+    settings().Rendering.QualityLevel = Enum.QualityLevel.Level01
+    for _, obj in pairs(workspace:GetDescendants()) do
+        if obj:IsA("ParticleEmitter") or obj:IsA("Trail") then
+            obj.Enabled = false
+        end
+    end
+end)
+
+CreateCategoryButton("Rejoin", UDim2.new(0.02, 0, 0, 115), MiscFrame, function()
+    TeleportService:Teleport(game.PlaceId, LP)
+end)
+
+CreateCategoryButton("Server Hop", UDim2.new(0.35, 0, 0, 115), MiscFrame, function()
+    local servers = HttpService:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?sortOrder=Asc&limit=100"))
+    for _, server in pairs(servers.data) do
+        if server.playing < server.maxPlayers then
+            TeleportService:TeleportToPlaceInstance(game.PlaceId, server.id, LP)
+        end
+    end
+end)
+
+CreateCategoryButton("Copy Game ID", UDim2.new(0.68, 0, 0, 115), MiscFrame, function()
+    setclipboard(tostring(game.PlaceId))
+end)
+
+-- ADVANCED ESP SYSTEM
+local function CreateESP(player)
+    if player == LP or not player.Character then return end
+    
+    local char = player.Character
+    local hrp = char:FindFirstChild("HumanoidRootPart")
+    if not hrp then return end
+    
+    pcall(function()
+        local box = Drawing.new("Square")
+        box.Visible = false
+        box.Color = Color3.fromRGB(255, 0, 0)
+        box.Thickness = 2
+        box.Transparency = 1
+        box.Filled = false
+        ESPBoxes[player] = box
+        
+        local tracer = Drawing.new("Line")
+        tracer.Visible = false
+        tracer.Color = Color3.fromRGB(255, 0, 0)
+        tracer.Thickness = 2
+        tracer.Transparency = 1
+        ESPTracers[player] = tracer
+        
+        local nameText = Drawing.new("Text")
+        nameText.Visible = false
+        nameText.Color = Color3.fromRGB(255, 255, 255)
+        nameText.Size = 16
+        nameText.Center = true
+        nameText.Outline = true
+        nameText.Font = 2
+        ESPNames[player] = nameText
+        
+        local distText = Drawing.new("Text")
+        distText.Visible = false
+        distText.Color = Color3.fromRGB(255, 255, 0)
+        distText.Size = 14
+        distText.Center = true
+        distText.Outline = true
+        distText.Font = 2
+        ESPDistances[player] = distText
+    end)
 end
 
--- Update Player List
-function UpdatePlayerList()
-    for _, child in pairs(PlayerList:GetChildren()) do
-        if child:IsA("TextButton") then
-            child:Destroy()
-        end
-    end
-    
-    for _, player in pairs(Players:GetPlayers()) do
-        if player ~= LP then
-            local btn = CreatePlayerButton(player)
-            
-            if roles.Murder == player.Name then
-                btn.BackgroundColor3 = Color3.fromRGB(60, 20, 20)
-            elseif roles.Sheriff == player.Name then
-                btn.BackgroundColor3 = Color3.fromRGB(20, 20, 60)
-            elseif roles.Hero == player.Name then
-                btn.BackgroundColor3 = Color3.fromRGB(60, 60, 20)
+-- Update ESP
+RunService.RenderStepped:Connect(function()
+    if ESPEnabled then
+        for _, player in pairs(Players:GetPlayers()) do
+            if player ~= LP and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                if not ESPBoxes[player] then
+                    CreateESP(player)
+                end
+                
+                pcall(function()
+                    local hrp = player.Character.HumanoidRootPart
+                    local head = player.Character:FindFirstChild("Head")
+                    
+                    local vector, onScreen = Camera:WorldToViewportPoint(hrp.Position)
+                    
+                    if onScreen and ESPBoxes[player] then
+                        local headPos = Camera:WorldToViewportPoint(head.Position + Vector3.new(0, 0.5, 0))
+                        local legPos = Camera:WorldToViewportPoint(hrp.Position - Vector3.new(0, 3, 0))
+                        
+                        local height = math.abs(headPos.Y - legPos.Y)
+                        local width = height / 2
+                        
+                        ESPBoxes[player].Size = Vector2.new(width, height)
+                        ESPBoxes[player].Position = Vector2.new(vector.X - width / 2, vector.Y - height / 2)
+                        ESPBoxes[player].Visible = true
+                        
+                        if roles.Murder == player.Name then
+                            ESPBoxes[player].Color = Color3.fromRGB(255, 0, 0)
+                        elseif roles.Sheriff == player.Name then
+                            ESPBoxes[player].Color = Color3.fromRGB(0, 0, 255)
+                        else
+                            ESPBoxes[player].Color = Color3.fromRGB(0, 255, 0)
+                        end
+                        
+                        ESPTracers[player].From = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y)
+                        ESPTracers[player].To = Vector2.new(vector.X, vector.Y)
+                        ESPTracers[player].Color = ESPBoxes[player].Color
+                        ESPTracers[player].Visible = true
+                        
+                        ESPNames[player].Text = player.Name
+                        ESPNames[player].Position = Vector2.new(vector.X, vector.Y - height / 2 - 20)
+                        ESPNames[player].Visible = true
+                        
+                        local distance = math.floor((hrp.Position - LP.Character.HumanoidRootPart.Position).Magnitude)
+                        ESPDistances[player].Text = distance .. "m"
+                        ESPDistances[player].Position = Vector2.new(vector.X, vector.Y + height / 2 + 5)
+                        ESPDistances[player].Visible = true
+                    else
+                        if ESPBoxes[player] then ESPBoxes[player].Visible = false end
+                        if ESPTracers[player] then ESPTracers[player].Visible = false end
+                        if ESPNames[player] then ESPNames[player].Visible = false end
+                        if ESPDistances[player] then ESPDistances[player].Visible = false end
+                    end
+                end)
             end
         end
     end
     
-    PlayerList.CanvasSize = UDim2.new(0, 0, 0, UIListLayout.AbsoluteContentSize.Y + 10)
-end
+    if SpinBot and LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") then
+        LP.Character.HumanoidRootPart.CFrame = LP.Character.HumanoidRootPart.CFrame * CFrame.Angles(0, math.rad(20), 0)
+    end
+end)
+
+-- Bypass Speed & NoClip Loop
+RunService.Heartbeat:Connect(function()
+    BypassSpeed(WalkSpeed)
+    BypassNoClip()
+end)
 
 -- Button Events
 local minimized = false
@@ -610,7 +1266,7 @@ MinimizeBtn.MouseButton1Click:Connect(function()
     minimized = not minimized
     ContentFrame.Visible = not minimized
     MainFrame:TweenSize(
-        minimized and UDim2.new(0, 440, 0, 35) or UDim2.new(0, 440, 0, 500),
+        minimized and UDim2.new(0, 500, 0, 40) or UDim2.new(0, 500, 0, 700),
         Enum.EasingDirection.Out,
         Enum.EasingStyle.Quad,
         0.3,
@@ -621,40 +1277,47 @@ end)
 CloseBtn.MouseButton1Click:Connect(function()
     ScreenGui:Destroy()
     if currentSound then currentSound:Destroy() end
+    for _, v in pairs(ESPBoxes) do pcall(function() v:Remove() end) end
+    for _, v in pairs(ESPTracers) do pcall(function() v:Remove() end) end
+    for _, v in pairs(ESPNames) do pcall(function() v:Remove() end) end
+    for _, v in pairs(ESPDistances) do pcall(function() v:Remove() end) end
+    if flyConnection then flyConnection:Disconnect() end
+    DisableBypassFly()
 end)
 
--- Main Loop
-RunService.RenderStepped:Connect(function()
-    local success, result = pcall(function()
+-- Main Loop for Roles
+RunService.Heartbeat:Connect(function()
+    pcall(function()
         local getData = ReplicatedStorage:FindFirstChild("GetPlayerData", true)
         if getData then
-            return getData:InvokeServer()
-        end
-    end)
-    
-    if success and result then
-        local tempRoles = {}
-        for name, data in pairs(result) do
-            if data.Role == "Murderer" then
-                tempRoles.Murder = name
-            elseif data.Role == "Sheriff" then
-                tempRoles.Sheriff = name
-            elseif data.Role == "Hero" then
-                tempRoles.Hero = name
+            local result = getData:InvokeServer()
+            if result then
+                local tempRoles = {}
+                for name, data in pairs(result) do
+                    if data.Role == "Murderer" then
+                        tempRoles.Murder = name
+                    elseif data.Role == "Sheriff" then
+                        tempRoles.Sheriff = name
+                    elseif data.Role == "Hero" then
+                        tempRoles.Hero = name
+                    end
+                end
+                roles = tempRoles
             end
         end
-        
-        if tempRoles.Murder ~= roles.Murder or tempRoles.Sheriff ~= roles.Sheriff then
-            roles = tempRoles
-            UpdatePlayerList()
-        end
-        
-        roles = result
-    end
-    
-    UpdateESP()
+    end)
 end)
 
-UpdatePlayerList()
+-- Setup Bypass on Character Spawn
+LP.CharacterAdded:Connect(function(char)
+    wait(1)
+    SetupBypass()
+end)
 
-print("BurmaldaMellstroyUIMM2 loaded with all features!")
+SetupBypass()
+
+print("🔥 BurmaldaMellstroyUIMM2 - ULTIMATE ICEBERG EDITION 🔥")
+print("✅ 6 Songs Added!")
+print("✅ 60+ Functions!")
+print("✅ Full Bypass System!")
+print("✅ Deep Iceberg Exploits!")
