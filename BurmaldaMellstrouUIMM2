@@ -13,10 +13,59 @@ local UserInputService = game:GetService("UserInputService")
 local LP = Players.LocalPlayer
 local roles = {}
 
+-- Music System
+local MUSIC_URL = "https://github.com/Fl7ing/RobloxUI-Repositoryf/raw/refs/heads/main/YTDown_YouTube_Terranova-so-far-away-sped-up_Media_rltkZq9AMAw_006_128k.mp3" 
+local FILE_NAME = "Terranova_SpedUp.mp3"
+
+if not isfile(FILE_NAME) then
+    print("[BurmaldaMellstroyUIMM2] Downloading music from GitHub...")
+    
+    local success, response = pcall(function() 
+        return game:HttpGet(MUSIC_URL) 
+    end)
+    
+    if success and response then
+        writefile(FILE_NAME, response)
+        print("[BurmaldaMellstroyUIMM2] File downloaded and saved successfully!")
+    else
+        warn("[BurmaldaMellstroyUIMM2] Download error! Check connection or URL.")
+    end
+else
+    print("[BurmaldaMellstroyUIMM2] File already exists in workspace.")
+end
+
+local success, audioData = pcall(function()
+    return getcustomasset(FILE_NAME)
+end)
+
+if success and audioData then
+    if game:GetService("CoreGui"):FindFirstChild("BurmaldaTerranova") then
+        game:GetService("CoreGui").BurmaldaTerranova:Destroy()
+    end
+
+    local LocalSound = Instance.new("Sound")
+    LocalSound.Name = "BurmaldaTerranova"
+    LocalSound.SoundId = audioData
+    LocalSound.Volume = 2.5
+    LocalSound.Looped = true
+    LocalSound.Parent = game:GetService("CoreGui")
+
+    if not LocalSound.IsLoaded then 
+        LocalSound.Loaded:Wait() 
+    end
+    
+    LocalSound:Play()
+    print("[BurmaldaMellstroyUIMM2] Terranova is playing now!")
+else
+    warn("[BurmaldaMellstroyUIMM2] Failed to play audio via getcustomasset.")
+end
+
 -- GUI Creation
 local ScreenGui = Instance.new("ScreenGui")
 local MainFrame = Instance.new("Frame")
 local TopBar = Instance.new("Frame")
+local LeftImage = Instance.new("ImageLabel")
+local RightImage = Instance.new("ImageLabel")
 local Title = Instance.new("TextLabel")
 local MinimizeBtn = Instance.new("TextButton")
 local CloseBtn = Instance.new("TextButton")
@@ -57,17 +106,57 @@ local TopCorner = Instance.new("UICorner")
 TopCorner.CornerRadius = UDim.new(0, 10)
 TopCorner.Parent = TopBar
 
+-- Left Image (Spinning)
+LeftImage.Name = "LeftImage"
+LeftImage.Parent = TopBar
+LeftImage.BackgroundTransparency = 1
+LeftImage.Position = UDim2.new(0, 5, 0.5, -12)
+LeftImage.Size = UDim2.new(0, 24, 0, 24)
+LeftImage.Image = "rbxassetid://132853558280556"
+LeftImage.ScaleType = Enum.ScaleType.Fit
+LeftImage.AnchorPoint = Vector2.new(0.5, 0.5)
+LeftImage.Position = UDim2.new(0, 17, 0.5, 0)
+
+local LeftCorner = Instance.new("UICorner")
+LeftCorner.CornerRadius = UDim.new(1, 0)
+LeftCorner.Parent = LeftImage
+
 -- Title
 Title.Name = "Title"
 Title.Parent = TopBar
 Title.BackgroundTransparency = 1
-Title.Position = UDim2.new(0, 10, 0, 0)
-Title.Size = UDim2.new(0.7, 0, 1, 0)
+Title.Position = UDim2.new(0, 35, 0, 0)
+Title.Size = UDim2.new(1, -140, 1, 0)
 Title.Font = Enum.Font.GothamBold
 Title.Text = "BurmaldaMellstroyUIMM2"
 Title.TextColor3 = Color3.fromRGB(255, 255, 255)
 Title.TextSize = 14
-Title.TextXAlignment = Enum.TextXAlignment.Left
+Title.TextXAlignment = Enum.TextXAlignment.Center
+
+-- Right Image (Spinning)
+RightImage.Name = "RightImage"
+RightImage.Parent = TopBar
+RightImage.BackgroundTransparency = 1
+RightImage.Size = UDim2.new(0, 24, 0, 24)
+RightImage.Image = "rbxassetid://132853558280556"
+RightImage.ScaleType = Enum.ScaleType.Fit
+RightImage.AnchorPoint = Vector2.new(0.5, 0.5)
+RightImage.Position = UDim2.new(1, -93, 0.5, 0)
+
+local RightCorner = Instance.new("UICorner")
+RightCorner.CornerRadius = UDim.new(1, 0)
+RightCorner.Parent = RightImage
+
+-- Spinning Animation for Images
+local spinSpeed = 2 -- Speed of rotation (seconds per full rotation)
+
+spawn(function()
+    while true do
+        RunService.RenderStepped:Wait()
+        LeftImage.Rotation = LeftImage.Rotation + (360 / (spinSpeed * 60))
+        RightImage.Rotation = RightImage.Rotation - (360 / (spinSpeed * 60))
+    end
+end)
 
 -- Minimize Button
 MinimizeBtn.Name = "MinimizeBtn"
