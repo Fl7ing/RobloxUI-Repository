@@ -9,56 +9,77 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
+local Lighting = game:GetService("Lighting")
 
 local LP = Players.LocalPlayer
 local roles = {}
 
--- Music System
-local MUSIC_URL = "https://github.com/Fl7ing/RobloxUI-Repositoryf/raw/refs/heads/main/YTDown_YouTube_Terranova-so-far-away-sped-up_Media_rltkZq9AMAw_006_128k.mp3" 
-local FILE_NAME = "Terranova_SpedUp.mp3"
+-- Music System with Multiple Songs
+local SONGS = {
+    {
+        name = "Terranova",
+        url = "https://github.com/Fl7ing/RobloxUI-Repositoryf/raw/refs/heads/main/YTDown_YouTube_Terranova-so-far-away-sped-up_Media_rltkZq9AMAw_006_128k.mp3",
+        file = "Terranova_SpedUp.mp3"
+    },
+    {
+        name = "Privet",
+        url = "https://github.com/Fl7ing/RobloxUI-Repositoryf/raw/refs/heads/main/YTDown_YouTube_Privet-Privet_Media_klzBSu7XNEU_009_128k.mp3",
+        file = "Privet_Song.mp3"
+    },
+    {
+        name = "Bass",
+        url = "https://github.com/Fl7ing/RobloxUI-Repositoryf/raw/refs/heads/main/YTDown_YouTube_Media_ELQPYWxR7Qw_009_128k%20(1).mp3",
+        file = "Bass_Song.mp3"
+    }
+}
 
-if not isfile(FILE_NAME) then
-    print("[BurmaldaMellstroyUIMM2] Downloading music from GitHub...")
-    
-    local success, response = pcall(function() 
-        return game:HttpGet(MUSIC_URL) 
+local currentSongIndex = 1
+local currentSound = nil
+
+function DownloadAndPlaySong(songData)
+    if not isfile(songData.file) then
+        print("[BurmaldaMellstroyUIMM2] Downloading " .. songData.name .. "...")
+        
+        local success, response = pcall(function() 
+            return game:HttpGet(songData.url) 
+        end)
+        
+        if success and response then
+            writefile(songData.file, response)
+            print("[BurmaldaMellstroyUIMM2] " .. songData.name .. " downloaded!")
+        else
+            warn("[BurmaldaMellstroyUIMM2] Download error for " .. songData.name)
+            return
+        end
+    end
+
+    local success, audioData = pcall(function()
+        return getcustomasset(songData.file)
     end)
-    
-    if success and response then
-        writefile(FILE_NAME, response)
-        print("[BurmaldaMellstroyUIMM2] File downloaded and saved successfully!")
-    else
-        warn("[BurmaldaMellstroyUIMM2] Download error! Check connection or URL.")
+
+    if success and audioData then
+        if currentSound then
+            currentSound:Destroy()
+        end
+
+        currentSound = Instance.new("Sound")
+        currentSound.Name = "BurmaldaMusic"
+        currentSound.SoundId = audioData
+        currentSound.Volume = 2.5
+        currentSound.Looped = true
+        currentSound.Parent = game:GetService("CoreGui")
+
+        if not currentSound.IsLoaded then 
+            currentSound.Loaded:Wait() 
+        end
+        
+        currentSound:Play()
+        print("[BurmaldaMellstroyUIMM2] Playing: " .. songData.name)
     end
-else
-    print("[BurmaldaMellstroyUIMM2] File already exists in workspace.")
 end
 
-local success, audioData = pcall(function()
-    return getcustomasset(FILE_NAME)
-end)
-
-if success and audioData then
-    if game:GetService("CoreGui"):FindFirstChild("BurmaldaTerranova") then
-        game:GetService("CoreGui").BurmaldaTerranova:Destroy()
-    end
-
-    local LocalSound = Instance.new("Sound")
-    LocalSound.Name = "BurmaldaTerranova"
-    LocalSound.SoundId = audioData
-    LocalSound.Volume = 2.5
-    LocalSound.Looped = true
-    LocalSound.Parent = game:GetService("CoreGui")
-
-    if not LocalSound.IsLoaded then 
-        LocalSound.Loaded:Wait() 
-    end
-    
-    LocalSound:Play()
-    print("[BurmaldaMellstroyUIMM2] Terranova is playing now!")
-else
-    warn("[BurmaldaMellstroyUIMM2] Failed to play audio via getcustomasset.")
-end
+-- Start with first song
+DownloadAndPlaySong(SONGS[currentSongIndex])
 
 -- GUI Creation
 local ScreenGui = Instance.new("ScreenGui")
@@ -73,6 +94,7 @@ local ContentFrame = Instance.new("Frame")
 local PlayerList = Instance.new("ScrollingFrame")
 local UIListLayout = Instance.new("UIListLayout")
 local OptionsFrame = Instance.new("Frame")
+local ExtraFrame = Instance.new("Frame")
 
 -- Properties
 ScreenGui.Name = "BurmaldaMellstroyUIMM2"
@@ -85,12 +107,11 @@ MainFrame.Name = "MainFrame"
 MainFrame.Parent = ScreenGui
 MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 MainFrame.BorderSizePixel = 0
-MainFrame.Position = UDim2.new(0.5, -200, 0.5, -200)
-MainFrame.Size = UDim2.new(0, 400, 0, 400)
+MainFrame.Position = UDim2.new(0.5, -220, 0.5, -250)
+MainFrame.Size = UDim2.new(0, 440, 0, 500)
 MainFrame.Active = true
 MainFrame.Draggable = true
 
--- Rounded corners
 local MainCorner = Instance.new("UICorner")
 MainCorner.CornerRadius = UDim.new(0, 10)
 MainCorner.Parent = MainFrame
@@ -110,7 +131,6 @@ TopCorner.Parent = TopBar
 LeftImage.Name = "LeftImage"
 LeftImage.Parent = TopBar
 LeftImage.BackgroundTransparency = 1
-LeftImage.Position = UDim2.new(0, 5, 0.5, -12)
 LeftImage.Size = UDim2.new(0, 24, 0, 24)
 LeftImage.Image = "rbxassetid://132853558280556"
 LeftImage.ScaleType = Enum.ScaleType.Fit
@@ -121,7 +141,7 @@ local LeftCorner = Instance.new("UICorner")
 LeftCorner.CornerRadius = UDim.new(1, 0)
 LeftCorner.Parent = LeftImage
 
--- Title
+-- Title (RED TEXT)
 Title.Name = "Title"
 Title.Parent = TopBar
 Title.BackgroundTransparency = 1
@@ -129,7 +149,7 @@ Title.Position = UDim2.new(0, 35, 0, 0)
 Title.Size = UDim2.new(1, -140, 1, 0)
 Title.Font = Enum.Font.GothamBold
 Title.Text = "BurmaldaMellstroyUIMM2"
-Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextColor3 = Color3.fromRGB(255, 50, 50) -- RED TEXT
 Title.TextSize = 14
 Title.TextXAlignment = Enum.TextXAlignment.Center
 
@@ -147,14 +167,12 @@ local RightCorner = Instance.new("UICorner")
 RightCorner.CornerRadius = UDim.new(1, 0)
 RightCorner.Parent = RightImage
 
--- Spinning Animation for Images
-local spinSpeed = 2 -- Speed of rotation (seconds per full rotation)
-
+-- Spinning Animation (VERY FAST)
 spawn(function()
     while true do
         RunService.RenderStepped:Wait()
-        LeftImage.Rotation = LeftImage.Rotation + (360 / (spinSpeed * 60))
-        RightImage.Rotation = RightImage.Rotation - (360 / (spinSpeed * 60))
+        LeftImage.Rotation = LeftImage.Rotation + 6 -- Very fast
+        RightImage.Rotation = RightImage.Rotation - 6
     end
 end)
 
@@ -209,13 +227,25 @@ local OptCorner = Instance.new("UICorner")
 OptCorner.CornerRadius = UDim.new(0, 8)
 OptCorner.Parent = OptionsFrame
 
+-- Extra Functions Frame
+ExtraFrame.Name = "ExtraFrame"
+ExtraFrame.Parent = ContentFrame
+ExtraFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+ExtraFrame.BorderSizePixel = 0
+ExtraFrame.Position = UDim2.new(0, 10, 0, 140)
+ExtraFrame.Size = UDim2.new(1, -20, 0, 120)
+
+local ExtraCorner = Instance.new("UICorner")
+ExtraCorner.CornerRadius = UDim.new(0, 8)
+ExtraCorner.Parent = ExtraFrame
+
 -- Player List
 PlayerList.Name = "PlayerList"
 PlayerList.Parent = ContentFrame
 PlayerList.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 PlayerList.BorderSizePixel = 0
-PlayerList.Position = UDim2.new(0, 10, 0, 140)
-PlayerList.Size = UDim2.new(1, -20, 1, -150)
+PlayerList.Position = UDim2.new(0, 10, 0, 270)
+PlayerList.Size = UDim2.new(1, -20, 1, -280)
 PlayerList.ScrollBarThickness = 4
 PlayerList.CanvasSize = UDim2.new(0, 0, 0, 0)
 
@@ -227,19 +257,19 @@ UIListLayout.Parent = PlayerList
 UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 UIListLayout.Padding = UDim.new(0, 5)
 
--- Functions
-local function CreateButton(name, position, callback)
+-- Button Creation Function with RED text
+local function CreateButton(name, position, parent, callback)
     local btn = Instance.new("TextButton")
     btn.Name = name
-    btn.Parent = OptionsFrame
+    btn.Parent = parent or OptionsFrame
     btn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
     btn.BorderSizePixel = 0
     btn.Position = position
     btn.Size = UDim2.new(0.45, 0, 0, 30)
-    btn.Font = Enum.Font.Gotham
+    btn.Font = Enum.Font.GothamBold
     btn.Text = name
-    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    btn.TextSize = 13
+    btn.TextColor3 = Color3.fromRGB(255, 50, 50) -- RED TEXT
+    btn.TextSize = 12
     
     local corner = Instance.new("UICorner")
     corner.CornerRadius = UDim.new(0, 6)
@@ -248,32 +278,36 @@ local function CreateButton(name, position, callback)
     btn.MouseButton1Click:Connect(callback)
     
     btn.MouseEnter:Connect(function()
-        TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(45, 45, 45)}):Play()
+        TweenService:Create(btn, TweenInfo.new(0.2), {
+            BackgroundColor3 = Color3.fromRGB(255, 50, 50),
+            TextColor3 = Color3.fromRGB(255, 255, 255)
+        }):Play()
     end)
     
     btn.MouseLeave:Connect(function()
-        TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(35, 35, 35)}):Play()
+        TweenService:Create(btn, TweenInfo.new(0.2), {
+            BackgroundColor3 = Color3.fromRGB(35, 35, 35),
+            TextColor3 = Color3.fromRGB(255, 50, 50)
+        }):Play()
     end)
     
     return btn
 end
 
 local ESPEnabled = true
-local ShowNames = true
 local FlingPower = 500
+local Fullbright = false
+local NoClip = false
+local InfiniteJump = false
+local Fly = false
+local FlySpeed = 50
 
--- Toggle ESP
-CreateButton("Toggle ESP", UDim2.new(0.025, 0, 0, 10), function()
+-- Main Functions (Top Frame)
+CreateButton("Toggle ESP", UDim2.new(0.025, 0, 0, 10), OptionsFrame, function()
     ESPEnabled = not ESPEnabled
 end)
 
--- Toggle Names
-CreateButton("Toggle Names", UDim2.new(0.525, 0, 0, 10), function()
-    ShowNames = not ShowNames
-end)
-
--- Kill All (Fling)
-CreateButton("Fling Murderer", UDim2.new(0.025, 0, 0, 45), function()
+CreateButton("Fling Murderer", UDim2.new(0.525, 0, 0, 10), OptionsFrame, function()
     local murder = roles and roles.Murder
     if murder then
         local player = Players:FindFirstChild(murder)
@@ -283,8 +317,7 @@ CreateButton("Fling Murderer", UDim2.new(0.025, 0, 0, 45), function()
     end
 end)
 
--- Teleport to Sheriff
-CreateButton("TP to Sheriff", UDim2.new(0.525, 0, 0, 45), function()
+CreateButton("TP to Sheriff", UDim2.new(0.025, 0, 0, 45), OptionsFrame, function()
     local sheriff = roles and roles.Sheriff
     if sheriff then
         local player = Players:FindFirstChild(sheriff)
@@ -294,17 +327,145 @@ CreateButton("TP to Sheriff", UDim2.new(0.525, 0, 0, 45), function()
     end
 end)
 
--- Speed Boost
-CreateButton("Speed Boost", UDim2.new(0.025, 0, 0, 80), function()
-    if LP.Character and LP.Character:FindFirstChild("Humanoid") then
-        LP.Character.Humanoid.WalkSpeed = LP.Character.Humanoid.WalkSpeed == 16 and 50 or 16
+CreateButton("TP to Murderer", UDim2.new(0.525, 0, 0, 45), OptionsFrame, function()
+    local murder = roles and roles.Murder
+    if murder then
+        local player = Players:FindFirstChild(murder)
+        if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            LP.Character.HumanoidRootPart.CFrame = player.Character.HumanoidRootPart.CFrame
+        end
     end
 end)
 
--- Jump Power
-CreateButton("Jump Boost", UDim2.new(0.525, 0, 0, 80), function()
+CreateButton("Speed Boost", UDim2.new(0.025, 0, 0, 80), OptionsFrame, function()
     if LP.Character and LP.Character:FindFirstChild("Humanoid") then
-        LP.Character.Humanoid.JumpPower = LP.Character.Humanoid.JumpPower == 50 and 120 or 50
+        LP.Character.Humanoid.WalkSpeed = LP.Character.Humanoid.WalkSpeed == 16 and 100 or 16
+    end
+end)
+
+CreateButton("Jump Boost", UDim2.new(0.525, 0, 0, 80), OptionsFrame, function()
+    if LP.Character and LP.Character:FindFirstChild("Humanoid") then
+        LP.Character.Humanoid.JumpPower = LP.Character.Humanoid.JumpPower == 50 and 150 or 50
+    end
+end)
+
+-- Extra Functions (Bottom Frame)
+CreateButton("Fullbright", UDim2.new(0.025, 0, 0, 10), ExtraFrame, function()
+    Fullbright = not Fullbright
+    if Fullbright then
+        Lighting.Brightness = 2
+        Lighting.ClockTime = 14
+        Lighting.FogEnd = 100000
+        Lighting.GlobalShadows = false
+        Lighting.OutdoorAmbient = Color3.fromRGB(128, 128, 128)
+    else
+        Lighting.Brightness = 1
+        Lighting.ClockTime = 12
+        Lighting.FogEnd = 100000
+        Lighting.GlobalShadows = true
+    end
+end)
+
+CreateButton("NoClip", UDim2.new(0.525, 0, 0, 10), ExtraFrame, function()
+    NoClip = not NoClip
+end)
+
+CreateButton("Infinite Jump", UDim2.new(0.025, 0, 0, 45), ExtraFrame, function()
+    InfiniteJump = not InfiniteJump
+end)
+
+CreateButton("Fly", UDim2.new(0.525, 0, 0, 45), ExtraFrame, function()
+    Fly = not Fly
+    if Fly then
+        EnableFly()
+    else
+        DisableFly()
+    end
+end)
+
+CreateButton("Next Song", UDim2.new(0.025, 0, 0, 80), ExtraFrame, function()
+    currentSongIndex = currentSongIndex + 1
+    if currentSongIndex > #SONGS then
+        currentSongIndex = 1
+    end
+    DownloadAndPlaySong(SONGS[currentSongIndex])
+end)
+
+CreateButton("Kill All", UDim2.new(0.525, 0, 0, 80), ExtraFrame, function()
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= LP then
+            FlingPlayer(player)
+            wait(0.1)
+        end
+    end
+end)
+
+-- Infinite Jump
+UserInputService.JumpRequest:Connect(function()
+    if InfiniteJump and LP.Character and LP.Character:FindFirstChild("Humanoid") then
+        LP.Character.Humanoid:ChangeState("Jumping")
+    end
+end)
+
+-- NoClip
+RunService.Stepped:Connect(function()
+    if NoClip and LP.Character then
+        for _, part in pairs(LP.Character:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.CanCollide = false
+            end
+        end
+    end
+end)
+
+-- Fly System
+local flyBV, flyBG
+
+function EnableFly()
+    if not LP.Character or not LP.Character:FindFirstChild("HumanoidRootPart") then return end
+    
+    flyBV = Instance.new("BodyVelocity")
+    flyBV.MaxForce = Vector3.new(9e9, 9e9, 9e9)
+    flyBV.Velocity = Vector3.new(0, 0, 0)
+    flyBV.Parent = LP.Character.HumanoidRootPart
+    
+    flyBG = Instance.new("BodyGyro")
+    flyBG.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
+    flyBG.P = 1000
+    flyBG.Parent = LP.Character.HumanoidRootPart
+end
+
+function DisableFly()
+    if flyBV then flyBV:Destroy() end
+    if flyBG then flyBG:Destroy() end
+end
+
+RunService.RenderStepped:Connect(function()
+    if Fly and LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") and flyBV then
+        local camera = workspace.CurrentCamera
+        local moveDirection = Vector3.new(0, 0, 0)
+        
+        if UserInputService:IsKeyDown(Enum.KeyCode.W) then
+            moveDirection = moveDirection + (camera.CFrame.LookVector * FlySpeed)
+        end
+        if UserInputService:IsKeyDown(Enum.KeyCode.S) then
+            moveDirection = moveDirection - (camera.CFrame.LookVector * FlySpeed)
+        end
+        if UserInputService:IsKeyDown(Enum.KeyCode.A) then
+            moveDirection = moveDirection - (camera.CFrame.RightVector * FlySpeed)
+        end
+        if UserInputService:IsKeyDown(Enum.KeyCode.D) then
+            moveDirection = moveDirection + (camera.CFrame.RightVector * FlySpeed)
+        end
+        if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
+            moveDirection = moveDirection + Vector3.new(0, FlySpeed, 0)
+        end
+        if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
+            moveDirection = moveDirection - Vector3.new(0, FlySpeed, 0)
+        end
+        
+        flyBV.Velocity = moveDirection
+        flyBG.CFrame = camera.CFrame
     end
 end)
 
@@ -403,7 +564,7 @@ function UpdateESP()
                 elseif roles.Sheriff == player.Name then
                     highlight.FillColor = Color3.fromRGB(0, 0, 225)
                     highlight.OutlineColor = Color3.fromRGB(0, 100, 255)
-                elseif roles.Hero == player.Name and not IsAlive(Players:FindFirstChild(roles.Sheriff)) then
+                elseif roles.Hero == player.Name and roles.Sheriff and not IsAlive(Players:FindFirstChild(roles.Sheriff)) then
                     highlight.FillColor = Color3.fromRGB(255, 250, 0)
                     highlight.OutlineColor = Color3.fromRGB(255, 200, 0)
                 else
@@ -430,7 +591,6 @@ function UpdatePlayerList()
         if player ~= LP then
             local btn = CreatePlayerButton(player)
             
-            -- Color based on role
             if roles.Murder == player.Name then
                 btn.BackgroundColor3 = Color3.fromRGB(60, 20, 20)
             elseif roles.Sheriff == player.Name then
@@ -450,7 +610,7 @@ MinimizeBtn.MouseButton1Click:Connect(function()
     minimized = not minimized
     ContentFrame.Visible = not minimized
     MainFrame:TweenSize(
-        minimized and UDim2.new(0, 400, 0, 35) or UDim2.new(0, 400, 0, 400),
+        minimized and UDim2.new(0, 440, 0, 35) or UDim2.new(0, 440, 0, 500),
         Enum.EasingDirection.Out,
         Enum.EasingStyle.Quad,
         0.3,
@@ -460,6 +620,7 @@ end)
 
 CloseBtn.MouseButton1Click:Connect(function()
     ScreenGui:Destroy()
+    if currentSound then currentSound:Destroy() end
 end)
 
 -- Main Loop
@@ -494,7 +655,6 @@ RunService.RenderStepped:Connect(function()
     UpdateESP()
 end)
 
--- Initial setup
 UpdatePlayerList()
 
-print("BurmaldaMellstroyUIMM2 loaded successfully!")
+print("BurmaldaMellstroyUIMM2 loaded with all features!")
